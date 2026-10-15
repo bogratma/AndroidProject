@@ -2,18 +2,15 @@ package com.simpleplayer
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.simpleplayer.ui.theme.SimplePlayerTheme
 import android.util.Log
-import androidx.savedstate.savedState
 
 class TrackActivity : ComponentActivity() {
     private var currentId: String? = null
