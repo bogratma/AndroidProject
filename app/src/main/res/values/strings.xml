@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">SimplePlayer</string>
+    <string name="search">Поиск</string>
+    <string name="library">Библиотека</string>
+    <string name="profile">Профиль</string>
+    <string name="search_hint">Название трека</string>
+    <string name="search_description">Поиск по названию трека</string>
+    <string name="error_title">Не удалось загрузить</string>
+    <string name="error_message">Нет соединения с интернетом</string>
+    <string name="retry">Повторить</string>
+    <string name="loading">Загружаем…</string>
+    <string name="demo_section">Этот раздел пока не реализован</string>
+    <string name="find">Найти</string>
+    <string name="start_title">Найдите любимый трек</string>
+    <string name="start_search">Введите название трека</string>
+    <string name="empty_title">Ничего не найдено</string>
+    <string name="empty_message">Проверьте запрос</string>
+    <string name="reset">Сбросить поиск</string>
+    <string name="results_count">Найдено треков: %1$d</string>
+    <string name="play_track">Воспроизвести %1$s</string>
+    <string name="close">Закрыть</string>
 </resources>
