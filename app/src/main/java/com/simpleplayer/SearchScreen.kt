@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -70,7 +73,8 @@ fun SearchScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(ScreenSizes.gap),
+            .padding(ScreenSizes.gap)
+            .safeDrawingPadding(),
         verticalArrangement = Arrangement.spacedBy(ScreenSizes.gap)
     ) {
         Text(
@@ -91,7 +95,6 @@ fun SearchScreen() {
                 SearchState.Loading -> {
                     LoadingComponent(
                         modifier = Modifier.align(Alignment.TopStart)
-                            .padding(top = ScreenSizes.gap)
                     )
                 }
                 SearchState.Content -> {

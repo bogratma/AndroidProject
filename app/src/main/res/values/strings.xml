@@ -16,6 +16,9 @@
     <string name="empty_title">Ничего не найдено</string>
     <string name="empty_message">Проверьте запрос</string>
     <string name="reset">Сбросить поиск</string>
+    <string name="load_icon">Иконка загрузки</string>
+    <string name="search_icon">Иконка поиска</string>
+
     <string name="results_count">Найдено треков: %1$d</string>
     <string name="play_track">Воспроизвести %1$s</string>
     <string name="close">Закрыть</string>

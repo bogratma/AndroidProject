@@ -40,7 +40,7 @@ fun EmptyContent(
                 painter = painterResource(
                     R.drawable.ic_search
                 ),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.search_icon),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(
                     ScreenSizes.statusIcon

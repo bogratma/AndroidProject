@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +52,12 @@ fun TrackItem(
     track: Track,
     onClick: () -> Unit
 ) {
-    Surface {
+    Card(modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(ScreenSizes.smallGap),
@@ -117,7 +124,7 @@ fun SearchField(
                 painter = painterResource(
                     R.drawable.ic_search
                 ),
-                contentDescription = null
+                contentDescription = stringResource(R.string.search_icon)
             )
         },
         keyboardOptions = KeyboardOptions(
