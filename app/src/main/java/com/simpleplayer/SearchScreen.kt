@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,61 +13,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.simpleplayer.ui.theme.MusicTheme
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-fun SearchScreen() {
-    var query by remember {
-        mutableStateOf("")
-    }
-    var state by remember {
-        mutableStateOf(SearchState.Content)
-    }
-    var tracks by remember {
-        mutableStateOf(demoTracks)
-    }
-    val startSearch: () -> Unit = {
-        if (
-            query.isNotBlank() &&
-            state != SearchState.Loading
-        ) {
-            state = SearchState.Loading
-        }
-    }
-    LaunchedEffect(state) {
-        if (state == SearchState.Loading) {
-            val request = query.trim()
-            delay(1000.milliseconds)
-            tracks = demoTracks.filter { track ->
-                track.title.contains(
-                    request,
-                    ignoreCase = true
-                ) || track.artist.contains(
-                    request,
-                    ignoreCase = true
-                )
-            }
-            state = when {
-                request.equals(
-                    "error",
-                    ignoreCase = true
-                ) -> SearchState.Error
-                tracks.isEmpty() -> SearchState.Empty
-                else -> SearchState.Content
-            }
-        }
-    }
+fun SearchScreen(
+    uiState: SearchUiState,
+    onQueryChange: (String) -> Unit,
+    onSearch: () -> Unit,
+    onReset: () -> Unit,
+    onPlayClick: (Track) -> Unit
+) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,16 +40,16 @@ fun SearchScreen() {
             style = MaterialTheme.typography.headlineSmall
         )
         SearchField(
-            query = query,
-            onQueryChange = { newText -> query = newText },
-            onSearch = startSearch,
-            enabled = state != SearchState.Loading
+            query = uiState.query,
+            onQueryChange = onQueryChange,
+            onSearch = onSearch,
+            enabled = uiState.state != SearchState.Loading
         )
         Box(
             modifier = Modifier.weight(1f).fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            when (state) {
+            when (uiState.state) {
                 SearchState.Loading -> {
                     LoadingComponent(
                         modifier = Modifier.align(Alignment.TopStart)
@@ -102,44 +60,97 @@ fun SearchScreen() {
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(ScreenSizes.smallGap)
                     ) {
-                        items(tracks) { track ->
+                        items(uiState.tracks) { track ->
                             TrackItem(track = track,
-                                onClick = {}
+                                onClick = {onPlayClick(track)}
                             )
                         }
                     }
                 }
-                SearchState.Empty -> {
-                    EmptyContent(onReset = {
-                            query = ""
-                            tracks = demoTracks
-                            state = SearchState.Content
-                        }
-                    )
-                }
-                SearchState.Error -> {
-                    ErrorComponent(
-                        onRetry = startSearch
-                    )
-                }
+                SearchState.Empty -> {EmptyContent(onReset=onReset)}
+                SearchState.Error -> {ErrorComponent(onRetry=onSearch)}
             }
         }
     }
 }
 
+@Composable
+private fun SearchPreviewContent(uiState: SearchUiState) {
+    MusicTheme(darkTheme = false) {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            SearchScreen(
+                uiState = uiState,
+                onQueryChange = {},
+                onSearch = {},
+                onReset = {},
+                onPlayClick = {}
+            )
+        }
+    }
+}
+
 @Preview(
-    name = "Шрифт 150%",
+    name = "Content",
     widthDp = 360,
     heightDp = 800,
     fontScale = 1.5f
 )
 @Composable
-fun SearchScreenPreview() {
-    MusicTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            SearchScreen()
-        }
-    }
+fun SearchContentPreview() {
+    SearchPreviewContent(
+        uiState = SearchUiState(
+            query = "Track",
+            state = SearchState.Content,
+            tracks = demoTracks
+        )
+    )
+}
+@Preview(
+    name = "Empty",
+    widthDp = 360,
+    heightDp = 800,
+    fontScale = 1.5f
+)
+@Composable
+fun SearchEmptyPreview() {
+    SearchPreviewContent(
+        uiState = SearchUiState(
+            query = "фвфвфвфы",
+            state = SearchState.Empty,
+            tracks = emptyList()
+        )
+    )
+}
+
+@Preview(
+    name = "Error",
+    widthDp = 360,
+    heightDp = 800,
+    fontScale = 1.5f
+)
+@Composable
+fun SearchErrorPreview() {
+    SearchPreviewContent(
+        uiState = SearchUiState(
+            query = "error",
+            state = SearchState.Error,
+            tracks = emptyList()
+        )
+    )
+}
+@Preview(
+    name = "Loading",
+    widthDp = 360,
+    heightDp = 800,
+    fontScale = 1.5f
+)
+@Composable
+fun SearchLoadingPreview() {
+    SearchPreviewContent(
+        uiState = SearchUiState(
+            query = "Track",
+            state = SearchState.Loading,
+            tracks = emptyList()
+        )
+    )
 }
