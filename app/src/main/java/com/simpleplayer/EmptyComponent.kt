@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import com.simpleplayer.ui.theme.ScreenSizes
 
 @Composable
 fun EmptyContent(
@@ -47,17 +48,20 @@ fun EmptyContent(
                 )
             )
         }
+
         Text(
             text = stringResource(R.string.empty_title),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
+
         Text(
             text = stringResource(R.string.empty_message),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
+
         Button(
             onClick = onReset
         ) {

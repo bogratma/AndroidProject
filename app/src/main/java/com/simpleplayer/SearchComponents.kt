@@ -33,43 +33,37 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.simpleplayer.ui.theme.MusicTheme
+import com.simpleplayer.ui.theme.ScreenSizes
 
-object ScreenSizes {
-    val gap = 16.dp
-    val smallGap = 8.dp
-    val touch = 48.dp
-    val cover = 48.dp
-    val statusCircle = 88.dp
-    val statusIcon = 32.dp
-    val errorBadge = 36.dp
-    val skeletonLine = 12.dp
-}
 @Composable
 fun TrackItem(
     track: Track,
     onClick: () -> Unit
 ) {
-    Card(modifier = Modifier.fillMaxWidth(),
+    Card(
+        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(ScreenSizes.smallGap),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ScreenSizes.gap)
         ) {
             Box(
-                modifier = Modifier.size(ScreenSizes.cover)
+                modifier = Modifier
+                    .size(ScreenSizes.cover)
                     .background(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = MaterialTheme.shapes.small
                     )
             )
+
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -84,13 +78,15 @@ fun TrackItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+
             FilledIconButton(
                 onClick = onClick,
                 modifier = Modifier.size(ScreenSizes.touch)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_play_arrow),
-                    contentDescription = stringResource(R.string.play_track,
+                    contentDescription = stringResource(
+                        R.string.play_track,
                         track.title
                     )
                 )
@@ -98,6 +94,7 @@ fun TrackItem(
         }
     }
 }
+
 @Composable
 fun SearchField(
     query: String,
@@ -105,14 +102,15 @@ fun SearchField(
     onSearch: () -> Unit,
     enabled: Boolean = true
 ) {
+    val description = stringResource(R.string.search_hint)
 
-   val description = stringResource(R.string.search_hint)
     TextField(
         value = query,
         onValueChange = onQueryChange,
-        modifier = Modifier.fillMaxWidth()
-            .semantics{
-                contentDescription=description
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics {
+                contentDescription = description
             },
         singleLine = true,
         placeholder = {
@@ -145,9 +143,10 @@ fun SearchField(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        enabled=enabled
+        enabled = enabled
     )
 }
+
 @Preview(
     showBackground = true,
     widthDp = 360
@@ -165,6 +164,7 @@ fun TrackItemPreview() {
         )
     }
 }
+
 @Preview(
     showBackground = true,
     widthDp = 360
@@ -177,6 +177,7 @@ fun SearchFieldPreview() {
     var result by remember {
         mutableStateOf("")
     }
+
     MusicTheme {
         Column {
             SearchField(

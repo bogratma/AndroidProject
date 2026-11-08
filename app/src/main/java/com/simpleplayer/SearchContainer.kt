@@ -14,17 +14,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+
 @Composable
-fun SearchContainer(searchViewModel: SearchViewModel=viewModel()) {
+fun SearchContainer(searchViewModel: SearchViewModel = viewModel()) {
     val uiState by searchViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(uiState.message) {
         val message = uiState.message
-        if(message != null){
+
+        if (message != null) {
             snackbarHostState.showSnackbar(message)
             searchViewModel.onMessageShow()
         }
     }
+
     Box(modifier = Modifier.fillMaxSize()) {
         SearchScreen(
             uiState = uiState,
@@ -33,7 +37,13 @@ fun SearchContainer(searchViewModel: SearchViewModel=viewModel()) {
             onReset = searchViewModel::resetSearch,
             onPlayClick = searchViewModel::onPlayClick
         )
-        SnackbarHost(hostState = snackbarHostState, modifier = Modifier
-            .align(Alignment.BottomCenter).safeDrawingPadding().imePadding())
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .safeDrawingPadding()
+                .imePadding()
+        )
     }
 }

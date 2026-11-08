@@ -12,40 +12,71 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class SearchViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
-    private val _uiState = MutableStateFlow(SearchUiState(query = savedStateHandle.get<String>("query")?:""))
+    private val _uiState = MutableStateFlow(
+        SearchUiState(query = savedStateHandle.get<String>("query") ?: "")
+    )
+
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
-    fun onQueryChange(newQuery: String){
-            savedStateHandle["query"] = newQuery
-           _uiState.update { currentState ->currentState.copy(query = newQuery) }
-    }
-    fun search(){
-      val request = _uiState.value.query.trim()
-      if(request.isBlank() || _uiState.value.state == SearchState.Loading) { return }
-        _uiState.update { currentState -> currentState.copy(state = SearchState.Loading) }
-        viewModelScope.launch {
-            delay(1000.milliseconds)
-            val foundTracks = demoTracks.filter {
-                track -> track.title.contains(request, ignoreCase = true)
-                    || track.artist.contains(request, ignoreCase = true)
-            }
-            val newState = when {
-                request.equals("error", ignoreCase = true) -> SearchState.Error
-                foundTracks.isEmpty() -> SearchState.Empty
-                else -> SearchState.Content
-            }
-            _uiState.update { currentState -> currentState.copy(state=newState, tracks = foundTracks) }
+
+    fun onQueryChange(newQuery: String) {
+        savedStateHandle["query"] = newQuery
+
+        _uiState.update { currentState ->
+            currentState.copy(query = newQuery)
         }
     }
-    fun resetSearch(){
-        savedStateHandle["query"]=""
-        _uiState.update {currentState -> currentState.copy(query = "", state = SearchState.Content,
-            tracks = demoTracks)}
 
+    fun search() {
+        val request = _uiState.value.query.trim()
+
+        if (request.isBlank() || _uiState.value.result == SearchResult.Loading) {
+            return
+        }
+
+        _uiState.update { currentState ->
+            currentState.copy(result = SearchResult.Loading)
+        }
+
+        viewModelScope.launch {
+            delay(1000.milliseconds)
+
+            val foundTracks = demoTracks.filter { track ->
+                track.title.contains(request, ignoreCase = true)
+                    || track.artist.contains(request, ignoreCase = true)
+            }
+
+            val newResult = when {
+                request.equals("error", ignoreCase = true) -> SearchResult.Error
+                foundTracks.isEmpty() -> SearchResult.Empty
+                else -> SearchResult.Content(foundTracks)
+            }
+
+            _uiState.update { currentState ->
+                currentState.copy(result = newResult)
+            }
+        }
     }
-    fun onPlayClick(track: Track){
-        _uiState.update {currentState -> currentState.copy(message = "Play: ${track.title}")}
+
+    fun resetSearch() {
+        savedStateHandle["query"] = ""
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                query = "",
+                result = SearchResult.Content(demoTracks)
+            )
+        }
     }
-    fun onMessageShow(){
-        _uiState.update { currentState -> currentState.copy(message = null) }
+
+    fun onPlayClick(track: Track) {
+        _uiState.update { currentState ->
+            currentState.copy(message = "Play: ${track.title}")
+        }
+    }
+
+    fun onMessageShow() {
+        _uiState.update { currentState ->
+            currentState.copy(message = null)
+        }
     }
 }

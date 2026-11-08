@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.simpleplayer.ui.theme.MusicTheme
+import com.simpleplayer.ui.theme.ScreenSizes
 
 @Composable
 fun SearchScreen(
@@ -27,7 +28,6 @@ fun SearchScreen(
     onReset: () -> Unit,
     onPlayClick: (Track) -> Unit
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,36 +39,48 @@ fun SearchScreen(
             text = stringResource(R.string.search),
             style = MaterialTheme.typography.headlineSmall
         )
+
         SearchField(
             query = uiState.query,
             onQueryChange = onQueryChange,
             onSearch = onSearch,
-            enabled = uiState.state != SearchState.Loading
+            enabled = uiState.result != SearchResult.Loading
         )
+
         Box(
-            modifier = Modifier.weight(1f).fillMaxWidth(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            when (uiState.state) {
-                SearchState.Loading -> {
+            when (val result = uiState.result) {
+                SearchResult.Loading -> {
                     LoadingComponent(
                         modifier = Modifier.align(Alignment.TopStart)
                     )
                 }
-                SearchState.Content -> {
+
+                is SearchResult.Content -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(ScreenSizes.smallGap)
                     ) {
-                        items(uiState.tracks) { track ->
-                            TrackItem(track = track,
-                                onClick = {onPlayClick(track)}
+                        items(result.tracks) { track ->
+                            TrackItem(
+                                track = track,
+                                onClick = { onPlayClick(track) }
                             )
                         }
                     }
                 }
-                SearchState.Empty -> {EmptyContent(onReset=onReset)}
-                SearchState.Error -> {ErrorComponent(onRetry=onSearch)}
+
+                SearchResult.Empty -> {
+                    EmptyContent(onReset = onReset)
+                }
+
+                SearchResult.Error -> {
+                    ErrorComponent(onRetry = onSearch)
+                }
             }
         }
     }
@@ -100,11 +112,11 @@ fun SearchContentPreview() {
     SearchPreviewContent(
         uiState = SearchUiState(
             query = "Track",
-            state = SearchState.Content,
-            tracks = demoTracks
+            result = SearchResult.Content(demoTracks)
         )
     )
 }
+
 @Preview(
     name = "Empty",
     widthDp = 360,
@@ -116,8 +128,7 @@ fun SearchEmptyPreview() {
     SearchPreviewContent(
         uiState = SearchUiState(
             query = "фвфвфвфы",
-            state = SearchState.Empty,
-            tracks = emptyList()
+            result = SearchResult.Empty
         )
     )
 }
@@ -133,11 +144,11 @@ fun SearchErrorPreview() {
     SearchPreviewContent(
         uiState = SearchUiState(
             query = "error",
-            state = SearchState.Error,
-            tracks = emptyList()
+            result = SearchResult.Error
         )
     )
 }
+
 @Preview(
     name = "Loading",
     widthDp = 360,
@@ -149,8 +160,7 @@ fun SearchLoadingPreview() {
     SearchPreviewContent(
         uiState = SearchUiState(
             query = "Track",
-            state = SearchState.Loading,
-            tracks = emptyList()
+            result = SearchResult.Loading
         )
     )
 }
