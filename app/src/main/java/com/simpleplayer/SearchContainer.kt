@@ -16,7 +16,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun SearchContainer(searchViewModel: SearchViewModel = viewModel()) {
+fun SearchContainer(
+    searchViewModel: SearchViewModel = viewModel(),
+    onOpenTrack: (Int) -> Unit = {}
+) {
     val uiState by searchViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -35,7 +38,8 @@ fun SearchContainer(searchViewModel: SearchViewModel = viewModel()) {
             onQueryChange = searchViewModel::onQueryChange,
             onSearch = searchViewModel::search,
             onReset = searchViewModel::resetSearch,
-            onPlayClick = searchViewModel::onPlayClick
+            onPlayClick = searchViewModel::onPlayClick,
+            onOpenTrack = onOpenTrack
         )
 
         SnackbarHost(

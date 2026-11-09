@@ -26,7 +26,8 @@ fun SearchScreen(
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
     onReset: () -> Unit,
-    onPlayClick: (Track) -> Unit
+    onPlayClick: (Track) -> Unit,
+    onOpenTrack: (Int) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -68,7 +69,8 @@ fun SearchScreen(
                         items(result.tracks) { track ->
                             TrackItem(
                                 track = track,
-                                onClick = { onPlayClick(track) }
+                                onClick = { onPlayClick(track) },
+                                onOpenDetail = { onOpenTrack(track.id) }
                             )
                         }
                     }

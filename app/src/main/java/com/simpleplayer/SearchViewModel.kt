@@ -17,7 +17,39 @@ class SearchViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
     )
 
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+    private var lastSearchRequest = ""
+    init {
+        viewModelScope.launch {
+            TrackRepository.tracks.collect { tracks ->
+                _uiState.update { currentState ->
+                    if (
+                        currentState.result is SearchResult.Content ||
+                        currentState.result == SearchResult.Empty
+                    ) {
+                        val foundTracks = tracks.filter { track ->
+                            track.title.contains(
+                                lastSearchRequest,
+                                ignoreCase = true
+                            ) || track.artist.contains(
+                                lastSearchRequest,
+                                ignoreCase = true
+                            )
+                        }
 
+                        currentState.copy(
+                            result = if (foundTracks.isEmpty()) {
+                                SearchResult.Empty
+                            } else {
+                                SearchResult.Content(foundTracks)
+                            }
+                        )
+                    } else {
+                        currentState
+                    }
+                }
+            }
+        }
+    }
     fun onQueryChange(newQuery: String) {
         savedStateHandle["query"] = newQuery
 
@@ -32,7 +64,7 @@ class SearchViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         if (request.isBlank() || _uiState.value.result == SearchResult.Loading) {
             return
         }
-
+        lastSearchRequest = request
         _uiState.update { currentState ->
             currentState.copy(result = SearchResult.Loading)
         }
@@ -40,7 +72,7 @@ class SearchViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         viewModelScope.launch {
             delay(1000.milliseconds)
 
-            val foundTracks = demoTracks.filter { track ->
+            val foundTracks = TrackRepository.tracks.value.filter { track ->
                 track.title.contains(request, ignoreCase = true)
                     || track.artist.contains(request, ignoreCase = true)
             }
@@ -58,12 +90,13 @@ class SearchViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
     }
 
     fun resetSearch() {
+        lastSearchRequest = ""
         savedStateHandle["query"] = ""
 
         _uiState.update { currentState ->
             currentState.copy(
                 query = "",
-                result = SearchResult.Content(demoTracks)
+                result = SearchResult.Content(TrackRepository.tracks.value)
             )
         }
     }

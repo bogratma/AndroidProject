@@ -39,9 +39,12 @@ import com.simpleplayer.ui.theme.ScreenSizes
 @Composable
 fun TrackItem(
     track: Track,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onOpenDetail: () -> Unit = {}
+
 ) {
     Card(
+        onClick = onOpenDetail,
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
