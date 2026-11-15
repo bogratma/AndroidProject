@@ -9,12 +9,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.simpleplayer.ui.theme.MusicTheme
 import com.simpleplayer.ui.theme.ScreenSizes
 
 @Composable
@@ -75,6 +78,34 @@ fun TrackDetailScreen(
             ) {
                 Text(stringResource(R.string.share))
             }
+        }
+    }
+}
+
+@Preview(name = "Карточка трека", widthDp = 360, heightDp = 640)
+@Composable
+private fun TrackDetailPreview() {
+    MusicTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            TrackDetailScreen(
+                track = Track(id = 1, title = "Track 1", artist = "Vlad"),
+                onBack = {},
+                onEdit = {}
+            )
+        }
+    }
+}
+
+@Preview(name = "Трек не найден", widthDp = 360, heightDp = 640)
+@Composable
+private fun TrackNotFoundPreview() {
+    MusicTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            TrackDetailScreen(
+                track = null,
+                onBack = {},
+                onEdit = {}
+            )
         }
     }
 }

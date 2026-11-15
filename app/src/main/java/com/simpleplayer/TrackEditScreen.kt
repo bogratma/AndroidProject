@@ -10,10 +10,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.simpleplayer.ui.theme.MusicTheme
 import com.simpleplayer.ui.theme.ScreenSizes
 
 @Composable
@@ -63,6 +66,23 @@ fun TrackEditScreen(
             enabled = title.isNotBlank() && artist.isNotBlank()
         ) {
             Text("Сохранить")
+        }
+    }
+}
+
+@Preview(name = "Редактирование трека", widthDp = 360, heightDp = 640)
+@Composable
+private fun TrackEditPreview() {
+    MusicTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            TrackEditScreen(
+                title = "Track 1",
+                artist = "Vlad",
+                onTitleChange = {},
+                onArtistChange = {},
+                onSave = {},
+                onBack = {}
+            )
         }
     }
 }
