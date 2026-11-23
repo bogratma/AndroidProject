@@ -15,3 +15,9 @@ data class TrackDetail(
 data class TrackEdit(
     val trackId: Int
 ) : NavKey
+
+@Serializable
+data object Library : NavKey
+
+@Serializable
+data object Profile : NavKey

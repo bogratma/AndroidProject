@@ -12,34 +12,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.NavKey
 import com.simpleplayer.ui.theme.MusicTheme
 
 class MainActivity : ComponentActivity() {
-    private var pendingTrackId by mutableStateOf<Int?>(null)
-    private fun getTrackId(intent: Intent): Int? {
-        val uri = intent.data ?: return null
-
-        if (
-            intent.action != Intent.ACTION_VIEW ||
-            uri.scheme != "https" ||
-            uri.host != "simpleplayer.com"
-        ) {
-            return null
-        }
-
-        val segments = uri.pathSegments
-
-        return if (segments.size == 2 && segments[0] == "track") {
-            segments[1].toIntOrNull()
-        } else {
-            null
-        }
-    }
+    private var pendingDeepLinkStack by mutableStateOf<List<NavKey>?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
-            pendingTrackId = getTrackId(intent)
+            pendingDeepLinkStack = getDeepLinkStack(intent)
         }
         enableEdgeToEdge()
         setContent {
@@ -49,9 +31,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavigation(
-                        deepLinkTrackId = pendingTrackId,
+                        deepLinkStack = pendingDeepLinkStack,
                         onDeepLinkHandled = {
-                            pendingTrackId = null
+                            pendingDeepLinkStack = null
                         }
                     )
                 }
@@ -62,7 +44,6 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-
-        pendingTrackId = getTrackId(intent)
+        pendingDeepLinkStack = getDeepLinkStack(intent)
     }
 }
