@@ -1,48 +1,49 @@
 package com.simpleplayer
+
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.simpleplayer.ui.theme.SimplePlayerTheme
+import androidx.navigation3.runtime.NavKey
+import com.simpleplayer.ui.theme.MusicTheme
 
 class MainActivity : ComponentActivity() {
+    private var pendingDeepLinkStack by mutableStateOf<List<NavKey>?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            pendingDeepLinkStack = getDeepLinkStack(intent)
+        }
         enableEdgeToEdge()
         setContent {
-            SimplePlayerTheme() {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+            MusicTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavigation(
+                        deepLinkStack = pendingDeepLinkStack,
+                        onDeepLinkHandled = {
+                            pendingDeepLinkStack = null
+                        }
                     )
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SimplePlayerTheme() {
-        Greeting("Android")
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        pendingDeepLinkStack = getDeepLinkStack(intent)
     }
 }
-
-
